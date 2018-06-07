@@ -11,6 +11,10 @@
 <script>
 import axios from 'axios'
 import _ from 'lodash'
+import { Subject } from 'rxjs'
+// import { debounceTime } from 'rxjs/operators'
+
+const rxSubject = new Subject()
 
 export default {
   data: () => ({
@@ -21,6 +25,11 @@ export default {
     // whenever question changes, this function will run
     question: function (newQuestion, oldQuestion) {
       this.answer = 'Waiting for you to stop typing...'
+      // const obs = Observable.create()
+      // obs.subscribe(() => {
+      //   console.log('observable')
+      // })
+      rxSubject.next()
       this.debouncedGetAnswer()
     }
   },
@@ -32,6 +41,9 @@ export default {
     // finished typing before making the ajax request. To learn
     // more about the _.debounce function (and its cousin
     // _.throttle), visit: https://lodash.com/docs#debounce
+    rxSubject.subscribe(() => {
+      console.log('Hi RxJS')
+    })
     this.debouncedGetAnswer = _.debounce(this.getAnswer, 500)
   },
   methods: {
