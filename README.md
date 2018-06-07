@@ -11,3 +11,11 @@ Vue.js RxJS demo.
 
 
 So Link #1 is using Lodash debounce. We want to use RxJS instead.
+
+
+## Run the demo
+
+```
+yarn install
+yarn dev
+```
