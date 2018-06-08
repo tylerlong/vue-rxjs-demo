@@ -22,7 +22,7 @@ export default {
     // whenever question changes, this function will run
     question: function (newQuestion, oldQuestion) {
       this.answer = 'Waiting for you to stop typing...'
-      this.rxSubject.next(newQuestion)
+      this.rxSubject.next()
     }
   },
   created: function () {
@@ -33,11 +33,8 @@ export default {
     // finished typing before making the ajax request. To learn
     // more about the _.debounce function (and its cousin
     // _.throttle), visit: https://lodash.com/docs#debounce
-    this.rxSubject = new Subject().pipe(
-      debounceTime(1000)
-    )
-    this.rxSubject.subscribe(question => {
-      console.log('Hi RxJS:', question)
+    this.rxSubject = new Subject().pipe(debounceTime(500))
+    this.rxSubject.subscribe(() => {
       this.getAnswer()
     })
   },
