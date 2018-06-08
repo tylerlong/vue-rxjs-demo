@@ -10,11 +10,8 @@
 
 <script>
 import axios from 'axios'
-import _ from 'lodash'
 import { Subject } from 'rxjs'
-// import { debounceTime } from 'rxjs/operators'
-
-const rxSubject = new Subject()
+import { debounceTime } from 'rxjs/operators'
 
 export default {
   data: () => ({
@@ -25,12 +22,7 @@ export default {
     // whenever question changes, this function will run
     question: function (newQuestion, oldQuestion) {
       this.answer = 'Waiting for you to stop typing...'
-      // const obs = Observable.create()
-      // obs.subscribe(() => {
-      //   console.log('observable')
-      // })
-      rxSubject.next()
-      this.debouncedGetAnswer()
+      this.rxSubject.next(newQuestion)
     }
   },
   created: function () {
@@ -41,10 +33,13 @@ export default {
     // finished typing before making the ajax request. To learn
     // more about the _.debounce function (and its cousin
     // _.throttle), visit: https://lodash.com/docs#debounce
-    rxSubject.subscribe(() => {
-      console.log('Hi RxJS')
+    this.rxSubject = new Subject().pipe(
+      debounceTime(1000)
+    )
+    this.rxSubject.subscribe(question => {
+      console.log('Hi RxJS:', question)
+      this.getAnswer()
     })
-    this.debouncedGetAnswer = _.debounce(this.getAnswer, 500)
   },
   methods: {
     getAnswer: function () {
@@ -56,7 +51,7 @@ export default {
       var vm = this
       axios.get('https://yesno.wtf/api')
         .then(function (response) {
-          vm.answer = _.capitalize(response.data.answer)
+          vm.answer = response.data.answer
         })
         .catch(function (error) {
           vm.answer = 'Error! Could not reach the API. ' + error
